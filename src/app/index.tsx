@@ -1,12 +1,66 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const recetas = {
+   Fácil: {
+    nombre: 'Tostadas con huevo',
+    ingredientes: [
+      '2 huevos',
+      '2 tostadas',
+      'Sal',
+      'Pimienta',
+    ],
+    pasos: [
+      'Tostar el pan.',
+      'Cocinar los huevos.',
+      'Agregar sal y pimienta.',
+      'Servir.',
+    ],
+  },
+
+  Normal: {
+    nombre: 'Pasta con salsa',
+    ingredientes: [
+      '200 g de pasta',
+      'Salsa de tomate',
+      'Sal',
+      'Queso rallado',
+    ],
+    pasos: [
+      'Hervir el agua.',
+      'Cocinar la pasta.',
+      'Preparar la salsa.',
+      'Mezclar y servir.',
+    ],
+  },
+
+  Difícil: {
+    nombre: 'Risotto',
+    ingredientes: [
+      'Arroz',
+      'Caldo',
+      'Cebolla',
+      'Queso parmesano',
+    ],
+    pasos: [
+      'Preparar el caldo.',
+      'Saltear la cebolla.',
+      'Agregar el arroz.',
+      'Incorporar el caldo poco a poco.',
+      'Agregar el queso y servir.',
+    ],
+  },
+};
+
 export default function HomeScreen() {
-  const [dificultad, setDificultad] = useState('');
+  const [dificultad, setDificultad] = useState<
+  keyof typeof recetas | ''
+>('');
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <Text style={styles.logo}>🍳 Recetapp</Text>
 
       <Text style={styles.title}>¿Qué cocinamos hoy?</Text>
@@ -48,11 +102,39 @@ export default function HomeScreen() {
   <Text style={styles.cardText}>🔴 Difícil</Text>
 </Pressable>
 {dificultad !== '' && (
+  <Text style={styles.recipeText}>
+  Receta: {recetas[dificultad].nombre}
+</Text>
+)}
+{dificultad !== '' && (
+  <View>
+    <Text style={styles.sectionTitle}>Ingredientes</Text>
+
+    {recetas[dificultad].ingredientes.map((ingrediente) => (
+      <Text style={styles.recipeText}>
+        • {ingrediente}
+      </Text>
+    ))}
+  </View>
+)}
+{dificultad !== '' && (
+  <View>
+    <Text style={styles.sectionTitle}>Preparación</Text>
+
+    {recetas[dificultad].pasos.map((paso, index) => (
+      <Text style={styles.recipeText} key={index}>
+        {index + 1}. {paso}
+      </Text>
+    ))}
+  </View>
+)}
+{dificultad !== '' && (
   <Text style={styles.selectedText}>
     Elegiste: {dificultad}
   </Text>
 )}
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -114,5 +196,16 @@ selectedButton: {
   fontSize: 18,
   fontWeight: 'bold',
   marginTop: 15,
+},
+recipeText: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginTop: 15,
+},
+sectionTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginTop: 20,
+  marginBottom: 10,
 },
 });

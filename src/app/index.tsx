@@ -110,11 +110,11 @@ export default function HomeScreen() {
   <View>
     <Text style={styles.sectionTitle}>Ingredientes</Text>
 
-    {recetas[dificultad].ingredientes.map((ingrediente) => (
-      <Text style={styles.recipeText}>
-        • {ingrediente}
-      </Text>
-    ))}
+   {recetas[dificultad].ingredientes.map((ingrediente, index) => (
+  <Text style={styles.recipeText} key={index}>
+    • {ingrediente}
+  </Text>
+))}
   </View>
 )}
 {dificultad !== '' && (

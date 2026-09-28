@@ -102,23 +102,19 @@ export default function HomeScreen() {
   <Text style={styles.cardText}>🔴 Difícil</Text>
 </Pressable>
 {dificultad !== '' && (
-  <Text style={styles.recipeText}>
-  Receta: {recetas[dificultad].nombre}
-</Text>
-)}
-{dificultad !== '' && (
-  <View>
+  <View style={styles.recipeCard}>
+    <Text style={styles.recipeTitle}>
+      {recetas[dificultad].nombre}
+    </Text>
+
     <Text style={styles.sectionTitle}>Ingredientes</Text>
 
-   {recetas[dificultad].ingredientes.map((ingrediente, index) => (
-  <Text style={styles.recipeText} key={index}>
-    • {ingrediente}
-  </Text>
-))}
-  </View>
-)}
-{dificultad !== '' && (
-  <View>
+    {recetas[dificultad].ingredientes.map((ingrediente, index) => (
+      <Text style={styles.recipeText} key={index}>
+        • {ingrediente}
+      </Text>
+    ))}
+
     <Text style={styles.sectionTitle}>Preparación</Text>
 
     {recetas[dificultad].pasos.map((paso, index) => (
@@ -126,12 +122,11 @@ export default function HomeScreen() {
         {index + 1}. {paso}
       </Text>
     ))}
+
+    <Text style={styles.selectedText}>
+      Elegiste: {dificultad}
+    </Text>
   </View>
-)}
-{dificultad !== '' && (
-  <Text style={styles.selectedText}>
-    Elegiste: {dificultad}
-  </Text>
 )}
       </View>
       </ScrollView>
@@ -143,14 +138,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    justifyContent: 'center',
+    backgroundColor: '#f7f7f7',
   },
 
   logo: {
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
+     color: '#E85D04',
   },
 
   title: {
@@ -158,12 +154,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 12,
+    color: '#222222',
   },
 
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 30,
+    color: '#666666',
   },
 
   card: {
@@ -183,14 +181,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   button: {
-  padding: 12,
-  borderRadius: 10,
-  marginBottom: 8,
+  padding: 16,
+  borderRadius: 12,
+  marginBottom: 10,
   backgroundColor: '#ffffff',
+  borderWidth: 1,
+  borderColor: '#dddddd',
+
 },
 
 selectedButton: {
   backgroundColor: '#d9d9d9',
+  borderColor: '#E85D04',
+  borderWidth: 2,
 },
   selectedText: {
   fontSize: 18,
@@ -198,14 +201,31 @@ selectedButton: {
   marginTop: 15,
 },
 recipeText: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  marginTop: 15,
+  fontSize: 16,
+  marginTop: 8,
+  color: '#444444',
+  lineHeight: 24,
 },
 sectionTitle: {
   fontSize: 20,
   fontWeight: 'bold',
   marginTop: 20,
   marginBottom: 10,
+},
+recipeCard: {
+  marginTop: 20,
+  padding: 20,
+  borderRadius: 16,
+  backgroundColor: '#ffffff',
+  borderWidth: 1,
+  borderColor: '#eeeeee',
+  marginBottom: 20,
+},
+
+recipeTitle: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  color: '#E85D04',
 },
 });

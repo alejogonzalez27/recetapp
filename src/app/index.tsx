@@ -1,62 +1,40 @@
+import { Receta, recetas } from '@/data/recetas';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const recetas = {
-   Fácil: {
-    nombre: 'Tostadas con huevo',
-    ingredientes: [
-      '2 huevos',
-      '2 tostadas',
-      'Sal',
-      'Pimienta',
-    ],
-    pasos: [
-      'Tostar el pan.',
-      'Cocinar los huevos.',
-      'Agregar sal y pimienta.',
-      'Servir.',
-    ],
-  },
-
-  Normal: {
-    nombre: 'Pasta con salsa',
-    ingredientes: [
-      '200 g de pasta',
-      'Salsa de tomate',
-      'Sal',
-      'Queso rallado',
-    ],
-    pasos: [
-      'Hervir el agua.',
-      'Cocinar la pasta.',
-      'Preparar la salsa.',
-      'Mezclar y servir.',
-    ],
-  },
-
-  Difícil: {
-    nombre: 'Risotto',
-    ingredientes: [
-      'Arroz',
-      'Caldo',
-      'Cebolla',
-      'Queso parmesano',
-    ],
-    pasos: [
-      'Preparar el caldo.',
-      'Saltear la cebolla.',
-      'Agregar el arroz.',
-      'Incorporar el caldo poco a poco.',
-      'Agregar el queso y servir.',
-    ],
-  },
-};
 
 export default function HomeScreen() {
-  const [dificultad, setDificultad] = useState<
-  keyof typeof recetas | ''
+ const [dificultad, setDificultad] = useState<
+  Receta['dificultad'] | ''
 >('');
+const [momento, setMomento] = useState<
+  'Desayuno' | 'Almuerzo' | 'Merienda' | 'Cena' | ''
+>('');
+const [busqueda, setBusqueda] = useState('');
+const recetasFiltradas = recetas.filter((receta) => {
+  const coincideDificultad =
+    dificultad === '' || receta.dificultad === dificultad;
+
+  const coincideMomento =
+    momento === '' || receta.momentos.includes(momento);
+
+ const coincideBusqueda =
+  receta.nombre
+    .toLowerCase()
+    .includes(busqueda.trim().toLowerCase());
+
+  return coincideDificultad && coincideMomento && coincideBusqueda;
+});
 
   return (
     <SafeAreaView style={styles.container}>
@@ -68,8 +46,63 @@ export default function HomeScreen() {
       <Text style={styles.subtitle}>
         Encontrá una receta según tus ganas y tu nivel de cocina.
       </Text>
+      <TextInput
+  style={styles.searchInput}
+  placeholder="Buscar receta..."
+  value={busqueda}
+  onChangeText={setBusqueda}
+/>
 
       <View style={styles.card}>
+        <Text style={styles.cardTitle}>¿Para qué momento?</Text>
+
+<Pressable
+  style={[
+    styles.button,
+    momento === 'Desayuno' && styles.selectedButton,
+  ]}
+  onPress={() =>
+  setMomento(momento === 'Desayuno' ? '' : 'Desayuno')
+}
+>
+  <Text style={styles.cardText}>☕ Desayuno</Text>
+</Pressable>
+
+<Pressable
+  style={[
+    styles.button,
+    momento === 'Almuerzo' && styles.selectedButton,
+  ]}
+ onPress={() =>
+  setMomento(momento === 'Almuerzo' ? '' : 'Almuerzo')
+}
+>
+  <Text style={styles.cardText}>🍝 Almuerzo</Text>
+</Pressable>
+
+<Pressable
+  style={[
+    styles.button,
+    momento === 'Merienda' && styles.selectedButton,
+  ]}
+  onPress={() =>
+  setMomento(momento === 'Merienda' ? '' : 'Merienda')
+}
+>
+  <Text style={styles.cardText}>🧉 Merienda</Text>
+</Pressable>
+
+<Pressable
+  style={[
+    styles.button,
+    momento === 'Cena' && styles.selectedButton,
+  ]}
+  onPress={() =>
+  setMomento(momento === 'Cena' ? '' : 'Cena')
+}
+>
+  <Text style={styles.cardText}>🌙 Cena</Text>
+</Pressable>
         <Text style={styles.cardTitle}>Recetas por dificultad</Text>
 
       <Pressable
@@ -77,7 +110,9 @@ export default function HomeScreen() {
     styles.button,
     dificultad === 'Fácil' && styles.selectedButton,
   ]}
-  onPress={() => setDificultad('Fácil')}
+  onPress={() =>
+  setDificultad(dificultad === 'Fácil' ? '' : 'Fácil')
+}
 >
   <Text style={styles.cardText}>🟢 Fácil</Text>
 </Pressable>
@@ -87,7 +122,9 @@ export default function HomeScreen() {
     styles.button,
     dificultad === 'Normal' && styles.selectedButton,
   ]}
-  onPress={() => setDificultad('Normal')}
+  onPress={() =>
+  setDificultad(dificultad === 'Normal' ? '' : 'Normal')
+}
 >
   <Text style={styles.cardText}>🟡 Normal</Text>
 </Pressable>
@@ -97,35 +134,45 @@ export default function HomeScreen() {
     styles.button,
     dificultad === 'Difícil' && styles.selectedButton,
   ]}
-  onPress={() => setDificultad('Difícil')}
+  onPress={() =>
+  setDificultad(dificultad === 'Difícil' ? '' : 'Difícil')
+}
 >
   <Text style={styles.cardText}>🔴 Difícil</Text>
 </Pressable>
-{dificultad !== '' && (
-  <View style={styles.recipeCard}>
+{(dificultad !== '' || momento !== '' || busqueda !== '') && (
+  <View>
+    <Text style={styles.sectionTitle}>
+  Recetas encontradas
+</Text>
+{recetasFiltradas.length === 0 && (
+  <Text style={styles.emptyText}>
+    No encontramos recetas con esos filtros.
+  </Text>
+)}
+
+  {recetasFiltradas.map((receta) => (
+  <Pressable
+    style={styles.recipeCard}
+    key={receta.id}
+    onPress={() => {
+  console.log('TOQUÉ RECETA:', receta.id);
+  router.push({
+    pathname: '/receta/[id]',
+    params: { id: receta.id.toString() },
+  });
+}}
+>
+  <Image
+    source={{ uri: receta.imagen }}
+    style={styles.recipeImage}
+  />
+  
     <Text style={styles.recipeTitle}>
-      {recetas[dificultad].nombre}
+      {receta.nombre}
     </Text>
-
-    <Text style={styles.sectionTitle}>Ingredientes</Text>
-
-    {recetas[dificultad].ingredientes.map((ingrediente, index) => (
-      <Text style={styles.recipeText} key={index}>
-        • {ingrediente}
-      </Text>
-    ))}
-
-    <Text style={styles.sectionTitle}>Preparación</Text>
-
-    {recetas[dificultad].pasos.map((paso, index) => (
-      <Text style={styles.recipeText} key={index}>
-        {index + 1}. {paso}
-      </Text>
-    ))}
-
-    <Text style={styles.selectedText}>
-      Elegiste: {dificultad}
-    </Text>
+  </Pressable>
+))}
   </View>
 )}
       </View>
@@ -227,5 +274,27 @@ recipeTitle: {
   fontWeight: 'bold',
   marginBottom: 10,
   color: '#E85D04',
+},
+searchInput: {
+  backgroundColor: '#ffffff',
+  borderWidth: 1,
+  borderColor: '#dddddd',
+  borderRadius: 12,
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+  fontSize: 16,
+  marginBottom: 20,
+},
+emptyText: {
+  fontSize: 16,
+  color: '#777777',
+  marginTop: 10,
+  textAlign: 'center',
+},
+recipeImage: {
+  width: '100%',
+  height: 180,
+  borderRadius: 12,
+  marginBottom: 12,
 },
 });
